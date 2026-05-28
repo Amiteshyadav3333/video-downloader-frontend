@@ -1417,7 +1417,30 @@ function TranslatorSection({ BACKEND_URL }) {
                 </button>
               )}
             </div>
-            <p className="text-xs text-slate-600 text-center">🎧 Headphones best results · Clearly bolein, pause karein</p>
+
+            {/* Download Conversation History */}
+            {convHistory.length > 0 && !isConvActive && (
+              <button
+                onClick={() => {
+                  const lines = convHistory.map((h, i) =>
+                    `[${i+1}] ${getLang(convLangIn).flag} ${getLang(convLangIn).name}: ${h.original}\n     ${getLang(convLangOut).flag} ${getLang(convLangOut).name}: ${h.translated}`
+                  ).join('\n\n');
+                  const content = `IndiaSearch — Conversation Download\n${'='.repeat(40)}\n${getLang(convLangIn).flag} ${getLang(convLangIn).name} → ${getLang(convLangOut).flag} ${getLang(convLangOut).name}\nDate: ${new Date().toLocaleString('hi-IN')}\n${'='.repeat(40)}\n\n${lines}`;
+                  const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+                  const a = document.createElement('a');
+                  a.href = URL.createObjectURL(blob);
+                  a.download = `IndiaSearch_Conversation_${getLang(convLangIn).name}_to_${getLang(convLangOut).name}.txt`;
+                  a.click();
+                  URL.revokeObjectURL(a.href);
+                  toast.success('📄 Conversation download ho gayi!');
+                }}
+                className="w-full h-12 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black rounded-xl flex items-center justify-center gap-2.5 transition-all active:scale-[0.98] shadow-lg shadow-emerald-500/20"
+              >
+                <Download size={18} /> {getLang(convLangIn).flag}→{getLang(convLangOut).flag} Conversation Download (TXT)
+              </button>
+            )}
+
+            <p className="text-xs text-slate-600 text-center">🎧 Headphones best results · Clearly bolein, pause karein · ⬇️ Download available</p>
           </div>
         </div>
       )}
